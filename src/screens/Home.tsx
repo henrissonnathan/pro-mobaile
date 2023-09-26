@@ -1,7 +1,7 @@
 import React from 'react';
 import {SafeAreaView, ScrollView, StatusBar, Text} from 'react-native';
 import Header from '../components/Header';
-import PokemonList from '../components/PokemonList';
+import PokemonList from '../components/pokemonList';
 
 const pokemons = [
   {

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {TextInput, SafeAreaView, StyleSheet, Text, Button} from 'react-native';
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create({                                                                                                  
   input: {
     height: 60,
     margin: 12,

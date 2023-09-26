@@ -1,6 +1,8 @@
-import React, {useState} from 'react';
-import {TextInput, SafeAreaView, StyleSheet, Text,Button, Touchable, TouchableOpacity} from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { TextInput, SafeAreaView, StyleSheet, Text, Button, TouchableOpacity, View } from 'react-native';
 import { Image, Input } from 'react-native-elements';
+
+
 
 const styles = StyleSheet.create({
   input: {
@@ -10,7 +12,20 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     padding: 10,
   },
+  customButton: {
+    alignItems: 'center',
+    marginTop: 10, // Espaço entre os botões
+  },
+  buttonText: {
+    color: 'cor desejada', // Cor desejada do texto
+    fontSize: 18,
+  },
 });
+const CustomButton = ({ title, onPress, textColor }: any) => (
+  <TouchableOpacity onPress={onPress} style={styles.customButton}>
+    <Text style={{ ...styles.buttonText, color: textColor }}>{title}</Text>
+  </TouchableOpacity>
+);
 
 const Login = ({navigation}:any) => {
     const [Email, setEmail] = useState('');
@@ -87,13 +102,13 @@ const Login = ({navigation}:any) => {
 {errorMessage ? <Text style={{ color: 'red' }}>{errorMessage}</Text> : null}
       <Button   
       title='logar'
-      
-        onPress={handleSubmit}
-        
+        onPress={handleSubmit} 
       />
-      <Button
+      
+      <CustomButton
       title="cadastro"
       onPress={()=>{navigation.navigate('cadastro')}}
+      testColor="#111"
       />
     </SafeAreaView>
   );

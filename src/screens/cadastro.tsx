@@ -10,7 +10,20 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     padding: 10,
   },
+  customButton: {
+    alignItems: 'center',
+    marginTop: 10, // Espaço entre os botões
+  },
+  buttonText: {
+    color: 'cor desejada', // Cor desejada do texto
+    fontSize: 18,
+  },
 });
+const CustomButton = ({ title, onPress, textColor }: any) => (
+  <TouchableOpacity onPress={onPress} style={styles.customButton}>
+    <Text style={{ ...styles.buttonText, color: textColor }}>{title}</Text>
+  </TouchableOpacity>
+);
 
 const Cadastro = ({ navigation }: any) => {
   const [Email, setEmail] = useState('');
@@ -106,9 +119,10 @@ const Cadastro = ({ navigation }: any) => {
         title='cadastrar'
         onPress={handleRegister}
       />
-      <Button
+      <CustomButton
         title="login"
         onPress={() => { navigation.navigate('Login') }}
+        textColor="#111"
       />
     </SafeAreaView>
   );
