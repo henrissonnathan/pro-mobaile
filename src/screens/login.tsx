@@ -1,8 +1,18 @@
+import { create } from 'zustand'
 import React, { useCallback, useEffect, useState } from 'react';
 import { TextInput, SafeAreaView, StyleSheet, Text, Button, TouchableOpacity, View } from 'react-native';
 import { Image, Input } from 'react-native-elements';
 
-
+interface TokenStore {
+  token: string | null;
+  setToken: (newToken: string | null) => void;
+  clearToken: () => void;
+}
+const useTokenStore = create<TokenStore>((set) => ({
+  token: null,
+  setToken: (newToken) => set({ token: newToken }),
+  clearToken: () => set({ token: null }),
+}));
 
 const styles = StyleSheet.create({
   input: {
@@ -63,9 +73,12 @@ const Login = ({navigation}:any) => {
           });
     
           if (response.ok) {
-            // Autenticação bem-sucedida, pode redirecionar para a tela principal ou fazer outra ação.
-            //navigation.navigate('Main');
-            console.error('login bem sucedido')
+            const data = await response.json();
+            const userToken: string | null = data.token;
+            useTokenStore().setToken(userToken);
+           // await AsyncStorage.setItem('userToken', userToken);
+            //colocar aqui
+            navigation.navigate('ListPage');
           } else {
             // Trate erros de autenticação aqui, por exemplo, exibindo uma mensagem de erro.
             console.error('Erro na autenticação');

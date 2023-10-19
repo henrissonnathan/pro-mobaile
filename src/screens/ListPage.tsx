@@ -1,65 +1,70 @@
-import axios from 'axios'; //npm install axios
-import React, {useCallback, useEffect, useState} from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  SafeAreaView,
-  Text,
-  View,
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
+import create from 'zustand';
+import axios from 'axios';
 
-type ListItemProps = {
-  university: {
-    name: string;
-    web_pages: string[];
-  };
-};
+interface TokenStore {
+  token: string | null;
+  setToken: (newToken: string | null) => void;
+  clearToken: () => void;
+}
 
-const ListItem = ({university}: ListItemProps) => {
-  return (
-    <View>
-      <Text>{university.name}</Text>
-      <Text>{university.web_pages[0]}</Text>
-    </View>
-  );
-};
+const useTokenStore = create<TokenStore>((set) => ({
+  token: null,
+  setToken: (newToken) => set({ token: newToken }),
+  clearToken: () => set({ token: null }),
+}));
 
-const ListPage = () => {
-  const [universities, setUniversities] = useState();
-  const [loading, setLoading] = useState(false);
+interface Pet {
+  id: number;
+  name: string;
+  life: number;
+  foodLevel: number;
+  // outras propriedades 
+}
 
-  const getUniversityData = useCallback(async () => {
-    try {
-      setLoading(true);
-      const {data} = await axios.get(
-        'http://universities.hipolabs.com/search?country=Brazil',
-      );
-      setUniversities(data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+export default function PetList() {
+
+  const [pets, setPets] = useState<Pet[]>([]);
 
   useEffect(() => {
-    getUniversityData();
-    //eslint-disable-next-line react-hooks/exhaustive-deps
+    const fetchPets = async () => {
+      const token = useTokenStore.getState().token;
+      
+      const response = await axios.get('https://tamagochiapi-clpsampedro.b4a.run/pets', {
+        headers: {
+        'x-access-token': token
+        }  
+       });
+      
+      // setPets(response.data.pets as Pet[])
+      console.log('aqui')
+    };
+
+    fetchPets();
   }, []);
 
-  return (
-    <SafeAreaView>
-      {loading === true ? (
-        <ActivityIndicator size="large" />
-      ) : (
-        <FlatList
-          data={universities}
-          renderItem={({item}) => <ListItem university={item} />}
-        />
-      )}
-    </SafeAreaView>
-  );
-};
+  const renderPet = ({item}: {item: Pet}) => {
+    return (
+      <View>
+        <Text>{item.name}</Text>
+      </View>
+    )
+  };
 
-export default ListPage;
-//http://universities.hipolabs.com/search?country=Brazil                                                                                                                                                                                      
+  return (
+    <FlatList
+      data={pets}
+      renderItem={renderPet}
+      keyExtractor={item => item.id.toString()}
+    />
+  );
+}
+
+const styles = StyleSheet.create({
+  petContainer: {
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee' 
+  }
+});
