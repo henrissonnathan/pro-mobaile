@@ -50,12 +50,12 @@ console.log('listpage ',token)
 
   const renderPet = ({item}: {item: Pet}) => {
     return (
-      <View>
+      <View style={style.input}>
         
         <Text>
           Nome: {item.name}  vida: {item.life} comida: {item.foodLevel} divesão {item.funLevel}
         </Text>
-        <Text></Text>
+        
 
         
       </View>
@@ -72,7 +72,7 @@ console.log('listpage ',token)
       data={pets}
       renderItem={renderPet}
       keyExtractor={item => item.id.toString()}
-      style={style.input}
+      
     />
     
     </SafeAreaView>
