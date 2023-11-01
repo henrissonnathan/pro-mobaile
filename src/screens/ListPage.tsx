@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet,Button } from 'react-native';
+import React, { useState, useEffect, useId } from 'react';
+import { View, Text, FlatList, StyleSheet,Button, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { useTokenStore } from '../components/token';
@@ -11,7 +11,11 @@ const style = StyleSheet.create({
     borderRadius: 4,
     padding: 10,
     
-  }
+  },
+  buttonText: {
+    color: 'cor desejada', // Cor desejada do texto
+    fontSize: 13,
+  },
 });
 interface Pet {
   id: number;
@@ -26,7 +30,10 @@ const  PetList = ({navigation}:any) => {
   
   const {token} = useTokenStore();
   const [pets, setPets] = useState<Pet[]>([]);
-console.log('listpage ',token)
+const handleDelete = async () =>{
+   const renponsess = await axios.delete('https://tamagochiapi-clpsampedro.b4a.run/pets/')
+
+  }
   const fetchPets = async () => {
     try{
     const response = await axios.get('https://tamagochiapi-clpsampedro.b4a.run/pets', {
@@ -51,13 +58,15 @@ console.log('listpage ',token)
   const renderPet = ({item}: {item: Pet}) => {
     return (
       <View style={style.input}>
-        
+        <View>
         <Text>
-          Nome: {item.name}  vida: {item.life} comida: {item.foodLevel} divesão {item.funLevel}
+          Nome: {item.name} vida: {item.life} comida:{item.foodLevel} divesão {item.funLevel}
+          <TouchableOpacity onPress={handleDelete} >
+          <Text style={style.buttonText}>excluir</Text>
+        </TouchableOpacity>
         </Text>
         
-
-        
+        </View>
       </View>
     )
   };
@@ -69,8 +78,8 @@ console.log('listpage ',token)
         onPress={() => navigation.navigate('cadastroPet')} // 3. Navegar
       />
     <FlatList
-      data={pets}
-      renderItem={renderPet}
+      data={pets} 
+      renderItem={renderPet }
       keyExtractor={item => item.id.toString()}
       
     />
