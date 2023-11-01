@@ -1,18 +1,15 @@
-import { create } from 'zustand'
+import axios from 'axios';
+import { useTokenStore } from '../components/token'; 
 import React, { useCallback, useEffect, useState } from 'react';
 import { TextInput, SafeAreaView, StyleSheet, Text, Button, TouchableOpacity, View } from 'react-native';
 import { Image, Input } from 'react-native-elements';
-
+/*
 interface TokenStore {
   token: string | null;
   setToken: (newToken: string | null) => void;
   clearToken: () => void;
-}
-const useTokenStore = create<TokenStore>((set) => ({
-  token: null,
-  setToken: (newToken) => set({ token: newToken }),
-  clearToken: () => set({ token: null }),
-}));
+}*/
+
 
 const styles = StyleSheet.create({
   input: {
@@ -31,58 +28,45 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
 });
-const CustomButton = ({ title, onPress, textColor }: any) => (
+const CustomButton = ({ title, onPress, textColor }: any) => { 
+  return (
   <TouchableOpacity onPress={onPress} style={styles.customButton}>
     <Text style={{ ...styles.buttonText, color: textColor }}>{title}</Text>
   </TouchableOpacity>
-);
+)};
 
 const Login = ({navigation}:any) => {
     const [Email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     
+    const tokenStore = useTokenStore();
+    
     const [showPassword, setShowPassword] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
     const handleSubmit = async () => {
-        // Validações
-        if(!Email){
-          // Verifique se o email foi fornecido
-          setErrorMessage('Email é obtigatorio')
-          return;
-        }
-        if(password.length < 6){
-          //verique se a senha tem pelo menos 6 caracteres
-          setErrorMessage('A senha deve ter pelo menos 6 caracteres');
-          return;
-        }
-    
-        // Lógica de autenticação aqui (verificação de senha, comunicação com a API, etc.)
         try {
-          // Aqui você pode enviar as informações de login para a API
-          // Por exemplo, você pode usar o fetch para autenticar o usuário
-          const response = await fetch('https://tamagochiapi-clpsampedro.b4a.run/login', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              email: Email,
-              password: password,
-            }),
-          });
-    
-          if (response.ok) {
-            const data = await response.json();
-            const userToken: string | null = data.token;
-            useTokenStore().setToken(userToken);
-           // await AsyncStorage.setItem('userToken', userToken);
-            //colocar aqui
-            navigation.navigate('ListPage');
-          } else {
-            // Trate erros de autenticação aqui, por exemplo, exibindo uma mensagem de erro.
-            console.error('Erro na autenticação');
+          if(!Email){
+            // Verifique se o email foi fornecido
+            setErrorMessage('Email é obtigatorio')
+            return;
           }
+          if(password.length < 6){
+            //verique se a senha tem pelo menos 6 caracteres
+            setErrorMessage('A senha deve ter pelo menos 6 caracteres');
+            return;
+          }
+          
+          const body = {
+            email: Email,
+            password: password,
+          }
+          const {data} = await axios.post('https://tamagochiapi-clpsampedro.b4a.run/login', body);
+          
+             const userToken: string | null = data.token;
+            tokenStore.setToken(userToken);
+             navigation.navigate('PetList');
+          // }
         } catch (error) {
           // Lidar com erros de rede ou outros erros aqui.
           console.error('Erro de rede', error);
